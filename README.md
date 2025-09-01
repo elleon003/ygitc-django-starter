@@ -354,7 +354,115 @@ Templates are organized in `theme/templates/`:
 
 ### Docker Deployment
 
-The project is ready for Docker deployment with proper environment variable support.
+The project includes a complete Docker setup for production-like development and deployment.
+
+#### Quick Start with Docker
+
+**Basic setup** (Django + PostgreSQL + Redis):
+```bash
+docker compose up --build
+```
+
+**With Tailwind development** (recommended for frontend work):
+```bash
+docker compose --profile dev up --build
+```
+
+**With self-hosted SuperTokens** (full production simulation):
+```bash
+docker compose --profile self-hosted up --build
+```
+
+**All services**:
+```bash
+docker compose --profile dev --profile self-hosted up --build
+```
+
+#### Docker Services
+
+- **PostgreSQL**: Production-like database instead of SQLite
+- **Redis**: Caching and session storage
+- **Django Web**: Main application server
+- **Tailwind** (dev profile): CSS compilation with live reload
+- **SuperTokens Core** (self-hosted profile): Self-hosted authentication service
+
+#### Docker Configuration
+
+The Docker setup uses these files:
+
+- `docker-compose.yml`: Main orchestration configuration
+- `Dockerfile`: Multi-stage Python 3.12 + Node.js build
+- `.env.docker.example`: Template for Docker environment variables
+- `.env.docker`: Your local Docker environment (created from template, git-ignored)
+- `.dockerignore`: Optimized build context
+
+#### Environment Variables for Docker
+
+1. **Create your local Docker environment file**:
+   ```bash
+   cp .env.docker.example .env.docker
+   ```
+
+2. **Configure your OAuth and Turnstile keys** in `.env.docker`:
+   ```bash
+   # OAuth Provider Configuration
+   GOOGLE_CLIENT_ID=your-google-client-id
+   GOOGLE_CLIENT_SECRET=your-google-client-secret
+   LINKEDIN_CLIENT_ID=your-linkedin-client-id
+   LINKEDIN_CLIENT_SECRET=your-linkedin-client-secret
+
+   # Cloudflare Turnstile Configuration
+   TURNSTILE_SITE_KEY=your-turnstile-site-key
+   TURNSTILE_SECRET_KEY=your-turnstile-secret-key
+   ```
+
+> **Security Note**: The `.env.docker` file is automatically ignored by git to prevent committing sensitive credentials.
+
+#### Docker Development Workflow
+
+1. **First-time setup**:
+   ```bash
+   # Copy and configure environment
+   cp .env.docker.example .env.docker
+   # Edit .env.docker with your actual OAuth/Turnstile keys
+   
+   # Start development environment
+   docker compose --profile dev up --build
+   ```
+
+2. **Run migrations**:
+   ```bash
+   docker compose exec web python manage.py migrate
+   ```
+
+3. **Create superuser**:
+   ```bash
+   docker compose exec web python manage.py createsuperuser
+   ```
+
+4. **Access the application**:
+   - Main app: http://localhost:8000
+   - SuperTokens dashboard: http://localhost:3567/auth/dashboard (if using self-hosted profile)
+
+#### Production Docker Deployment
+
+For production, create a production-specific compose file or override the environment variables:
+
+```bash
+# Use production environment variables
+export DJANGO_SETTINGS_MODULE=config.settings.production
+export DEBUG=False
+export ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+
+# Deploy with production configuration
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+```
+
+#### Docker Profiles Explained
+
+- **Default**: Core services (web, db, redis) - minimal setup
+- **dev**: Adds Tailwind compilation for frontend development
+- **self-hosted**: Adds SuperTokens Core for testing social auth locally
 
 ## Development
 
