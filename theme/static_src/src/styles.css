@@ -1,5 +1,11 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "@tailwindcss/forms";
+
+@plugin "@tailwindcss/typography";
+
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark, synthwave;
+}
 
 /**
   * A catch-all path to Django template files, JavaScript, and Python files
