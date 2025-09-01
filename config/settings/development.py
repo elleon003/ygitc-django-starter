@@ -1,5 +1,9 @@
 from .base import *
 
+# Initialize SuperTokens
+from config.supertokens_config import init_supertokens
+init_supertokens()
+
 # Development-specific settings
 DEBUG = True
 

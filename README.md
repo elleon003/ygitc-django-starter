@@ -10,16 +10,20 @@ A modern, production-ready Django starter template with authentication, beautifu
 - 📱 **Responsive**: Mobile-first design with modern CSS framework
 - ⚙️ **Flexible Configuration**: Separate development and production settings
 - 🔐 **Custom User Model**: Email-based authentication instead of username
+- 🌐 **Social Authentication**: Google, LinkedIn, and Magic Link login via SuperTokens
+- 🤖 **CAPTCHA Protection**: Cloudflare Turnstile integration for bot protection
 - 🎯 **Ready to Deploy**: Environment-based configuration system
 
 ## Tech Stack
 
 - **Backend**: Django 5.2.5
 - **Frontend**: Tailwind CSS 4.x, DaisyUI 5.x
-- **Authentication**: Custom User model with email-based login
+- **Authentication**: Custom User model with email-based login + SuperTokens for social auth
 - **Database**: SQLite (development), PostgreSQL (production ready)
 - **Styling**: django-tailwind with live reload
 - **Development**: django-browser-reload for hot reloading
+- **Security**: Cloudflare Turnstile CAPTCHA protection
+- **Social Auth**: Google, LinkedIn OAuth + Magic Link authentication
 
 ## Quick Start
 
@@ -154,6 +158,23 @@ EMAIL_HOST_PASSWORD=your-app-password
 # Other settings
 TIME_ZONE=America/New_York
 ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+
+# SuperTokens Configuration
+SUPERTOKENS_CONNECTION_URI=https://try.supertokens.com
+SUPERTOKENS_API_KEY=your-supertokens-api-key
+SUPERTOKENS_APP_NAME=Django Starter
+SUPERTOKENS_API_DOMAIN=https://yourdomain.com
+SUPERTOKENS_WEBSITE_DOMAIN=https://yourdomain.com
+
+# OAuth Provider Configuration
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+LINKEDIN_CLIENT_ID=your-linkedin-client-id
+LINKEDIN_CLIENT_SECRET=your-linkedin-client-secret
+
+# Cloudflare Turnstile Configuration
+TURNSTILE_SITE_KEY=your-turnstile-site-key
+TURNSTILE_SECRET_KEY=your-turnstile-secret-key
 ```
 
 ### Settings Architecture
@@ -182,6 +203,99 @@ The project uses a custom user model (`users.CustomUser`) with email-based authe
 - `/users/logout/`: User logout
 - `/users/dashboard/`: User dashboard (login required)
 - `/users/settings/`: User settings (login required)
+
+## Social Authentication Setup
+
+### SuperTokens Configuration
+
+This project integrates with SuperTokens for social authentication providers and magic link functionality.
+
+#### 1. Create SuperTokens Account
+
+1. Visit [SuperTokens](https://supertokens.com/) and create an account
+2. Create a new application
+3. Note down your `Connection URI` and `API Key`
+
+#### 2. Configure OAuth Providers
+
+**Google OAuth Setup:**
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing
+3. Enable Google+ API
+4. Create OAuth 2.0 credentials
+5. Add your domain to authorized origins
+6. Add `http://localhost:8000/auth/callback/google` to authorized redirect URIs
+
+**LinkedIn OAuth Setup:**
+1. Go to [LinkedIn Developer Portal](https://www.linkedin.com/developers/)
+2. Create a new application
+3. Add OAuth 2.0 redirect URLs: `http://localhost:8000/auth/callback/linkedin`
+4. Note down Client ID and Client Secret
+
+#### 3. Configure Environment Variables
+
+Add these to your `.env.dev` (development) or `.env` (production):
+
+```bash
+# SuperTokens Configuration
+SUPERTOKENS_CONNECTION_URI=https://try.supertokens.com
+SUPERTOKENS_API_KEY=your-actual-api-key
+SUPERTOKENS_APP_NAME=Your App Name
+SUPERTOKENS_API_DOMAIN=http://localhost:8000  # or your production domain
+SUPERTOKENS_WEBSITE_DOMAIN=http://localhost:8000  # or your production domain
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+
+# LinkedIn OAuth
+LINKEDIN_CLIENT_ID=your-linkedin-client-id
+LINKEDIN_CLIENT_SECRET=your-linkedin-client-secret
+```
+
+### Cloudflare Turnstile Setup
+
+Turnstile provides CAPTCHA protection for your forms.
+
+#### 1. Get Turnstile Keys
+
+1. Visit [Cloudflare Dashboard](https://dash.cloudflare.com/)
+2. Go to Turnstile section
+3. Create a new site
+4. Add your domain (use `localhost` for development)
+5. Choose "Managed" challenge type
+6. Copy the Site Key and Secret Key
+
+#### 2. Configure Environment Variables
+
+```bash
+# Cloudflare Turnstile
+TURNSTILE_SITE_KEY=your-turnstile-site-key
+TURNSTILE_SECRET_KEY=your-turnstile-secret-key
+```
+
+#### 3. Testing Turnstile
+
+For development/testing, you can use these test keys:
+- **Site Key**: `1x00000000000000000000AA`
+- **Secret Key**: `1x0000000000000000000000000000000AA`
+
+## Authentication Features
+
+### Traditional Email/Password Authentication
+- Email-based user registration and login
+- Password validation and security
+- Integrated with Turnstile CAPTCHA (when configured)
+
+### Social Authentication Options
+- **Google**: One-click login with Google account
+- **LinkedIn**: Professional network authentication
+- **Magic Link**: Passwordless email-based authentication
+
+### CAPTCHA Protection
+- Cloudflare Turnstile integration
+- Protects registration and login forms
+- Gracefully degrades when not configured
 
 ## Frontend Development
 
