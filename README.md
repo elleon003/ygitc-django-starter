@@ -89,9 +89,7 @@ A modern, production-ready Django starter template with authentication, beautifu
 
 4. **Install Tailwind dependencies**
    ```bash
-   cd theme/static_src
-   npm install
-   cd ../..
+   python manage.py tailwind install
    ```
 
 5. **Set up environment variables**
@@ -110,21 +108,20 @@ A modern, production-ready Django starter template with authentication, beautifu
    python manage.py createsuperuser
    ```
 
-8. **Start the development servers**
+8. **Start the development server**
 
-   In one terminal (Django):
+   Run both Django and Tailwind watcher with a single command:
    ```bash
+   python manage.py tailwind dev
+   ```
+
+   Or run them separately in different terminals:
+   ```bash
+   # Terminal 1 - Django
    python manage.py runserver
-   ```
-
-   In another terminal (Tailwind):
-   ```bash
+   
+   # Terminal 2 - Tailwind watcher
    python manage.py tailwind start
-   ```
-
-   Or use the Procfile with foreman/honcho:
-   ```bash
-   foreman start -f Procfile.tailwind
    ```
 
 9. **Visit the application**
@@ -344,7 +341,7 @@ The project uses django-tailwind with DaisyUI components:
 
 ### Development Workflow
 
-1. **Start Tailwind compiler**: `python manage.py tailwind start`
+1. **Start development server**: `python manage.py tailwind dev` (runs both Django and Tailwind)
 2. **Make style changes**: Edit files in `theme/static_src/src/`
 3. **Build for production**: `python manage.py tailwind build`
 

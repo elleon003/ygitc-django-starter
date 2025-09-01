@@ -14,7 +14,7 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get
 
 # Application definition
 INSTALLED_APPS = [
-    # System apps
+    # Django core apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -22,13 +22,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Local apps
-    'users',
-
     # 3rd party apps
     'corsheaders',
     'tailwind',
+    
+    # Local apps
     'theme',
+    'users',
 ]
 
 MIDDLEWARE = [
