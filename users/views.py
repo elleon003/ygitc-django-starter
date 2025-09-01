@@ -39,3 +39,7 @@ def logout_view(request):
 @login_required
 def dashboard_view(request):
     return render(request, 'dashboard.html', {'user': request.user})
+
+@login_required
+def user_settings_view(request):
+    return render(request, 'user_settings.html', {'user': request.user})
