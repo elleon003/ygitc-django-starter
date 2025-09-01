@@ -2,6 +2,41 @@
 
 A modern, production-ready Django starter template with authentication, beautiful UI, and best practices built-in.
 
+## Table of Contents
+
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Quick Start](#quick-start)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Project Structure](#project-structure)
+- [Configuration](#configuration)
+  - [Environment Variables](#environment-variables)
+  - [Settings Architecture](#settings-architecture)
+- [User Authentication](#user-authentication)
+  - [Custom User Model](#custom-user-model)
+  - [Available Views](#available-views)
+- [Social Authentication Setup](#social-authentication-setup)
+  - [SuperTokens Configuration](#supertokens-configuration)
+  - [Cloudflare Turnstile Setup](#cloudflare-turnstile-setup)
+- [Authentication Features](#authentication-features)
+  - [Traditional Email/Password Authentication](#traditional-emailpassword-authentication)
+  - [Social Authentication Options](#social-authentication-options)
+  - [CAPTCHA Protection](#captcha-protection)
+- [Frontend Development](#frontend-development)
+  - [Tailwind CSS](#tailwind-css)
+  - [Development Workflow](#development-workflow)
+  - [Template System](#template-system)
+- [Deployment](#deployment)
+  - [Production Checklist](#production-checklist)
+  - [Docker Deployment](#docker-deployment)
+- [Development](#development)
+  - [Adding New Features](#adding-new-features)
+  - [Customizing Styles](#customizing-styles)
+- [Contributing](#contributing)
+- [License](#license)
+- [Support](#support)
+
 ## Features
 
 - 🚀 **Fast Setup**: Pre-configured authentication and user management
