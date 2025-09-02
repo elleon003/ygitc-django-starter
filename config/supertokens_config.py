@@ -27,6 +27,9 @@ def get_app_info():
     )
 
 def get_recipe_list():
+    # Import overrides here to avoid circular import
+    from users.supertokens_auth import override_email_password_apis, override_third_party_apis, override_passwordless_apis
+    
     return [
         session.init(),
         thirdparty.init(
@@ -55,13 +58,23 @@ def get_recipe_list():
                         ],
                     ),
                 ),
-            ])
+            ]),
+            override=thirdparty.InputOverrideConfig(
+                apis=override_third_party_apis
+            )
         ),
         passwordless.init(
             contact_config=ContactEmailOrPhoneConfig(),
             flow_type="MAGIC_LINK",
+            override=passwordless.InputOverrideConfig(
+                apis=override_passwordless_apis
+            )
         ),
-        emailpassword.init(),
+        emailpassword.init(
+            override=emailpassword.InputOverrideConfig(
+                apis=override_email_password_apis
+            )
+        ),
         dashboard.init(),
         userroles.init(),
         usermetadata.init(),

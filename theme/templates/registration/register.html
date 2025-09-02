@@ -201,15 +201,39 @@ function onTurnstileSuccess(token) {
 // SuperTokens Social Authentication
 document.addEventListener('DOMContentLoaded', function() {
     // Google Sign Up
-    document.getElementById('google-signup-btn').addEventListener('click', function() {
-        window.location.href = '/auth/authorisationurl?thirdPartyId=google&redirectURIOnProviderDashboard=' + 
-                              encodeURIComponent(window.location.origin + '/auth/callback/google');
+    document.getElementById('google-signup-btn').addEventListener('click', async function() {
+        try {
+            const response = await fetch('/auth/authorisationurl?thirdPartyId=google&redirectURIOnProviderDashboard=' + 
+                                       encodeURIComponent(window.location.origin + '/auth/callback/google'));
+            const data = await response.json();
+            
+            if (data.status === 'OK' && data.urlWithQueryParams) {
+                window.location.href = data.urlWithQueryParams;
+            } else {
+                alert('Error initiating Google sign-in. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error initiating Google sign-in. Please try again.');
+        }
     });
 
     // LinkedIn Sign Up
-    document.getElementById('linkedin-signup-btn').addEventListener('click', function() {
-        window.location.href = '/auth/authorisationurl?thirdPartyId=linkedin&redirectURIOnProviderDashboard=' + 
-                              encodeURIComponent(window.location.origin + '/auth/callback/linkedin');
+    document.getElementById('linkedin-signup-btn').addEventListener('click', async function() {
+        try {
+            const response = await fetch('/auth/authorisationurl?thirdPartyId=linkedin&redirectURIOnProviderDashboard=' + 
+                                       encodeURIComponent(window.location.origin + '/auth/callback/linkedin'));
+            const data = await response.json();
+            
+            if (data.status === 'OK' && data.urlWithQueryParams) {
+                window.location.href = data.urlWithQueryParams;
+            } else {
+                alert('Error initiating LinkedIn sign-in. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error initiating LinkedIn sign-in. Please try again.');
+        }
     });
 
     // Magic Link

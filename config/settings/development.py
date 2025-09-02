@@ -1,13 +1,13 @@
 from .base import *
 
-# Initialize SuperTokens
-from config.supertokens_config import init_supertokens
-init_supertokens()
-
 # Development-specific settings
 DEBUG = True
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,[::1],0.0.0.0').split(',')
+
+# Use X-Forwarded-Host header for proper host detection in Docker
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = None  # Not needed for development
 
 # Add development-specific apps
 INSTALLED_APPS += [

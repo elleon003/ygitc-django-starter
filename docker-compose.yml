@@ -45,6 +45,7 @@ services:
         condition: service_healthy
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings.development
+      - FORWARDED_ALLOW_IPS=*
     stdin_open: true
     tty: true
 
