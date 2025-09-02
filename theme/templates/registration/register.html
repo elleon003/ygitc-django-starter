@@ -202,13 +202,13 @@ function onTurnstileSuccess(token) {
 document.addEventListener('DOMContentLoaded', function() {
     // Google Sign Up
     document.getElementById('google-signup-btn').addEventListener('click', function() {
-        window.location.href = '/auth/authorisationurl?providerId=google&redirectURIOnProviderDashboard=' + 
+        window.location.href = '/auth/authorisationurl?thirdPartyId=google&redirectURIOnProviderDashboard=' + 
                               encodeURIComponent(window.location.origin + '/auth/callback/google');
     });
 
     // LinkedIn Sign Up
     document.getElementById('linkedin-signup-btn').addEventListener('click', function() {
-        window.location.href = '/auth/authorisationurl?providerId=linkedin&redirectURIOnProviderDashboard=' + 
+        window.location.href = '/auth/authorisationurl?thirdPartyId=linkedin&redirectURIOnProviderDashboard=' + 
                               encodeURIComponent(window.location.origin + '/auth/callback/linkedin');
     });
 
