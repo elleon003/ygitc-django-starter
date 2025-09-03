@@ -8,6 +8,7 @@ def home_view(request):
 
 urlpatterns = [
     path('', home_view, name='home'),
+    path("", include('social_django.urls', namespace="social")),
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
 ]
