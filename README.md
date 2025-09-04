@@ -17,7 +17,7 @@ A modern, production-ready Django starter template with authentication, beautifu
   - [Custom User Model](#custom-user-model)
   - [Available Views](#available-views)
 - [Social Authentication Setup](#social-authentication-setup)
-  - [SuperTokens Configuration](#supertokens-configuration)
+  - [Django Social Auth Configuration](#django-social-auth-configuration)
   - [Cloudflare Turnstile Setup](#cloudflare-turnstile-setup)
 - [Authentication Features](#authentication-features)
   - [Traditional Email/Password Authentication](#traditional-emailpassword-authentication)
@@ -45,7 +45,7 @@ A modern, production-ready Django starter template with authentication, beautifu
 - 📱 **Responsive**: Mobile-first design with modern CSS framework
 - ⚙️ **Flexible Configuration**: Separate development and production settings
 - 🔐 **Custom User Model**: Email-based authentication instead of username
-- 🌐 **Social Authentication**: Google, LinkedIn, and Magic Link login via SuperTokens
+- 🌐 **Social Authentication**: Google and LinkedIn OAuth2 login via Django Social Auth
 - 🤖 **CAPTCHA Protection**: Cloudflare Turnstile integration for bot protection
 - 🎯 **Ready to Deploy**: Environment-based configuration system
 
@@ -53,12 +53,12 @@ A modern, production-ready Django starter template with authentication, beautifu
 
 - **Backend**: Django 5.2.5
 - **Frontend**: Tailwind CSS 4.x, DaisyUI 5.x
-- **Authentication**: Custom User model with email-based login + SuperTokens for social auth
+- **Authentication**: Custom User model with email-based login + Django Social Auth for social auth
 - **Database**: SQLite (development), PostgreSQL (production ready)
 - **Styling**: django-tailwind with live reload
 - **Development**: django-browser-reload for hot reloading
 - **Security**: Cloudflare Turnstile CAPTCHA protection
-- **Social Auth**: Google, LinkedIn OAuth + Magic Link authentication
+- **Social Auth**: Google and LinkedIn OAuth2 authentication
 
 ## Quick Start
 
@@ -191,14 +191,7 @@ EMAIL_HOST_PASSWORD=your-app-password
 TIME_ZONE=America/New_York
 ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
 
-# SuperTokens Configuration
-SUPERTOKENS_CONNECTION_URI=https://try.supertokens.com
-SUPERTOKENS_API_KEY=your-supertokens-api-key
-SUPERTOKENS_APP_NAME=Django Starter
-SUPERTOKENS_API_DOMAIN=https://yourdomain.com
-SUPERTOKENS_WEBSITE_DOMAIN=https://yourdomain.com
-
-# OAuth Provider Configuration
+# Django Social Auth - OAuth Provider Configuration
 GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
 LINKEDIN_CLIENT_ID=your-linkedin-client-id
@@ -238,51 +231,68 @@ The project uses a custom user model (`users.CustomUser`) with email-based authe
 
 ## Social Authentication Setup
 
-### SuperTokens Configuration
+### Django Social Auth Configuration
 
-This project integrates with SuperTokens for social authentication providers and magic link functionality.
+This project uses Django Social Auth for social authentication with OAuth2 providers.
 
-#### 1. Create SuperTokens Account
+#### 1. Configure Google OAuth2
 
-1. Visit [SuperTokens](https://supertokens.com/) and create an account
-2. Create a new application
-3. Note down your `Connection URI` and `API Key`
-
-#### 2. Configure OAuth Providers
-
-**Google OAuth Setup:**
+**Google Cloud Console Setup:**
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Create a new project or select existing
-3. Enable Google+ API
-4. Create OAuth 2.0 credentials
-5. Add your domain to authorized origins
-6. Add `http://localhost:8000/auth/callback/google` to authorized redirect URIs
+3. Enable Google+ API or Google Identity API
+4. Go to "Credentials" → "Create Credentials" → "OAuth 2.0 Client IDs"
+5. Set application type to "Web application"
+6. Add authorized redirect URIs:
+   - `http://localhost:8000/complete/google-oauth2/` (development)
+   - `https://yourdomain.com/complete/google-oauth2/` (production)
+7. Note down Client ID and Client Secret
 
-**LinkedIn OAuth Setup:**
+#### 2. Configure LinkedIn OAuth2
+
+**LinkedIn Developer Portal Setup:**
 1. Go to [LinkedIn Developer Portal](https://www.linkedin.com/developers/)
 2. Create a new application
-3. Add OAuth 2.0 redirect URLs: `http://localhost:8000/auth/callback/linkedin`
-4. Note down Client ID and Client Secret
+3. Fill in required application details (name, description, etc.)
+4. In "Auth" tab, add authorized redirect URLs:
+   - `http://localhost:8000/complete/linkedin-oauth2/` (development)
+   - `https://yourdomain.com/complete/linkedin-oauth2/` (production)
+5. Request access to "Sign In with LinkedIn" product
+6. Note down Client ID and Client Secret
 
 #### 3. Configure Environment Variables
 
 Add these to your `.env.dev` (development) or `.env` (production):
 
 ```bash
-# SuperTokens Configuration
-SUPERTOKENS_CONNECTION_URI=https://try.supertokens.com
-SUPERTOKENS_API_KEY=your-actual-api-key
-SUPERTOKENS_APP_NAME=Your App Name
-SUPERTOKENS_API_DOMAIN=http://localhost:8000  # or your production domain
-SUPERTOKENS_WEBSITE_DOMAIN=http://localhost:8000  # or your production domain
-
-# Google OAuth
+# Django Social Auth - OAuth Provider Configuration
 GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
-
-# LinkedIn OAuth
 LINKEDIN_CLIENT_ID=your-linkedin-client-id
 LINKEDIN_CLIENT_SECRET=your-linkedin-client-secret
+```
+
+#### 4. Django Settings Configuration
+
+The Django Social Auth is configured in `config/settings/base.py`:
+```python
+# Social Auth configuration
+SOCIAL_AUTH_JSONFIELD_ENABLED = True
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.linkedin.LinkedinOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+# Google OAuth2 configuration
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('GOOGLE_CLIENT_ID')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
+
+# LinkedIn OAuth2 configuration
+SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY = os.environ.get('LINKEDIN_CLIENT_ID')
+SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET = os.environ.get('LINKEDIN_CLIENT_SECRET')
+SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ['r_liteprofile', 'r_emailaddress']
+SOCIAL_AUTH_LINKEDIN_OAUTH2_FIELD_SELECTORS = ['emailAddress']
 ```
 
 ### Cloudflare Turnstile Setup
@@ -320,9 +330,8 @@ For development/testing, you can use these test keys:
 - Integrated with Turnstile CAPTCHA (when configured)
 
 ### Social Authentication Options
-- **Google**: One-click login with Google account
-- **LinkedIn**: Professional network authentication
-- **Magic Link**: Passwordless email-based authentication
+- **Google**: One-click login with Google OAuth2
+- **LinkedIn**: Professional network authentication with LinkedIn OAuth2
 
 ### CAPTCHA Protection
 - Cloudflare Turnstile integration
@@ -400,15 +409,6 @@ docker compose up --build
 docker compose --profile dev up --build
 ```
 
-**With self-hosted SuperTokens** (full production simulation):
-```bash
-docker compose --profile self-hosted up --build
-```
-
-**All services**:
-```bash
-docker compose --profile dev --profile self-hosted up --build
-```
 
 #### Docker Services
 
@@ -416,7 +416,6 @@ docker compose --profile dev --profile self-hosted up --build
 - **Redis**: Caching and session storage
 - **Django Web**: Main application server
 - **Tailwind** (dev profile): CSS compilation with live reload
-- **SuperTokens Core** (self-hosted profile): Self-hosted authentication service
 
 #### Docker Configuration
 
@@ -437,7 +436,7 @@ The Docker setup uses these files:
 
 2. **Configure your OAuth and Turnstile keys** in `.env.docker`:
    ```bash
-   # OAuth Provider Configuration
+   # Django Social Auth - OAuth Provider Configuration
    GOOGLE_CLIENT_ID=your-google-client-id
    GOOGLE_CLIENT_SECRET=your-google-client-secret
    LINKEDIN_CLIENT_ID=your-linkedin-client-id
@@ -474,7 +473,6 @@ The Docker setup uses these files:
 
 4. **Access the application**:
    - Main app: http://localhost:8000
-   - SuperTokens dashboard: http://localhost:3567/auth/dashboard (if using self-hosted profile)
 
 #### Production Docker Deployment
 
@@ -494,7 +492,6 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 
 - **Default**: Core services (web, db, redis) - minimal setup
 - **dev**: Adds Tailwind compilation for frontend development
-- **self-hosted**: Adds SuperTokens Core for testing social auth locally
 
 ## Development
 
