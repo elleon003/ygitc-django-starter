@@ -1,0 +1,115 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en" data-theme="mindflow" {% if interface_prefs.reduce_motion %}class="motion-reduce"{% endif %}>
+<head>
+    <title>{% block title %}MindFlow - Transform overwhelm into action{% endblock %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Neurodivergent-friendly brain dump and action planning">
+    {% tailwind_css %}
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+
+    <!-- Alpine.js for lightweight interactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="min-h-screen bg-bright-snow {% if interface_prefs.high_contrast %}high-contrast{% endif %} {% if interface_prefs.larger_text %}text-lg{% endif %}">
+    <!-- MindFlow Navigation -->
+    <nav class="bg-white shadow-gentle sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo/Brand -->
+                <div class="flex items-center">
+                    <a href="{% url 'mindflow:dashboard' %}" class="flex items-center space-x-2 smooth-focus">
+                        <div class="w-10 h-10 bg-rebecca-purple rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xl font-semibold text-shadow-grey">MindFlow</span>
+                    </a>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="{% url 'mindflow:dashboard' %}" class="text-neutral-700 hover:text-rebecca-purple transition-colors smooth-focus">
+                        Dashboard
+                    </a>
+                    <a href="{% url 'mindflow:capture' %}" class="text-neutral-700 hover:text-rebecca-purple transition-colors smooth-focus">
+                        Capture
+                    </a>
+                    <a href="{% url 'mindflow:note_list' %}" class="text-neutral-700 hover:text-rebecca-purple transition-colors smooth-focus">
+                        Notes
+                    </a>
+                    <a href="{% url 'mindflow:plan_list' %}" class="text-neutral-700 hover:text-rebecca-purple transition-colors smooth-focus">
+                        Plans
+                    </a>
+                    <a href="{% url 'mindflow:neuro_profile_settings' %}" class="text-neutral-700 hover:text-rebecca-purple transition-colors smooth-focus">
+                        Settings
+                    </a>
+                </div>
+
+                <!-- User Menu -->
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-neutral-600 hidden sm:inline">{{ user.email }}</span>
+                    <a href="{% url 'users:logout' %}" class="text-neutral-700 hover:text-rebecca-purple transition-colors smooth-focus">
+                        Logout
+                    </a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-neutral-700 hover:text-rebecca-purple smooth-focus">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile menu -->
+            <div x-data="{ mobileMenuOpen: false }" x-show="mobileMenuOpen" x-cloak class="md:hidden pb-4">
+                <div class="flex flex-col space-y-3">
+                    <a href="{% url 'mindflow:dashboard' %}" class="text-neutral-700 hover:text-rebecca-purple transition-colors py-2 smooth-focus">Dashboard</a>
+                    <a href="{% url 'mindflow:capture' %}" class="text-neutral-700 hover:text-rebecca-purple transition-colors py-2 smooth-focus">Capture</a>
+                    <a href="{% url 'mindflow:note_list' %}" class="text-neutral-700 hover:text-rebecca-purple transition-colors py-2 smooth-focus">Notes</a>
+                    <a href="{% url 'mindflow:plan_list' %}" class="text-neutral-700 hover:text-rebecca-purple transition-colors py-2 smooth-focus">Plans</a>
+                    <a href="{% url 'mindflow:neuro_profile_settings' %}" class="text-neutral-700 hover:text-rebecca-purple transition-colors py-2 smooth-focus">Settings</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages with gentle styling -->
+    {% if messages %}
+        <div class="max-w-7xl mx-auto px-4 mt-4">
+            {% for message in messages %}
+                <div class="rounded-xl p-4 mb-4 {% if message.tags == 'success' %}bg-light-sea-green/10 border-2 border-light-sea-green text-success-dark{% elif message.tags == 'error' %}bg-red-50 border-2 border-red-300 text-red-700{% elif message.tags == 'warning' %}bg-sandy-clay/10 border-2 border-sandy-clay text-secondary-dark{% else %}bg-rebecca-purple/10 border-2 border-rebecca-purple text-rebecca-purple{% endif %}">
+                    <span>{{ message }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="{% block main_class %}flex-1{% endblock %}">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t-2 border-neutral-200 mt-12">
+        <div class="max-w-7xl mx-auto px-4 py-6 text-center text-neutral-600 text-sm">
+            <p>MindFlow - Transform overwhelm into action</p>
+            <p class="mt-2">Made with care for neurodivergent minds</p>
+        </div>
+    </footer>
+
+    {% block extra_body %}{% endblock %}
+</body>
+</html>

@@ -27,10 +27,12 @@ INSTALLED_APPS = [
     'tailwind',
     'social_django',
     'sesame',
-    
+    'django_htmx',
+
     # Local apps
     'theme',
     'users',
+    'mindflow',
 ]
 
 MIDDLEWARE = [
@@ -40,6 +42,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_htmx.middleware.HtmxMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -143,3 +146,16 @@ SOCIAL_AUTH_LINKEDIN_OAUTH2_FIELD_SELECTORS = ['emailAddress']
 # Django Sesame configuration
 SESAME_MAX_AGE = 60 * 60  # 1 hour expiration for magic links
 SESAME_ONE_TIME = True  # Magic links can only be used once
+
+# MindFlow AI Configuration
+OLLAMA_BASE_URL = os.environ.get('OLLAMA_BASE_URL', 'http://localhost:11434')
+OLLAMA_MODEL = os.environ.get('OLLAMA_MODEL', 'llama3:8b')
+OLLAMA_EMBED_MODEL = os.environ.get('OLLAMA_EMBED_MODEL', 'nomic-embed-text')
+
+# ChromaDB Configuration
+CHROMADB_PATH = os.environ.get('CHROMADB_PATH', str(BASE_DIR / 'chromadb_data'))
+CHROMADB_COLLECTION_NAME = 'mindflow_notes'
+
+# MindFlow Settings
+MINDFLOW_MAX_ACTIVE_PLANS = 3  # Maximum active plans shown on dashboard
+MINDFLOW_RECENT_NOTES_COUNT = 5  # Number of recent notes to show
