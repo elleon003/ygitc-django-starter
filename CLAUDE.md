@@ -590,6 +590,30 @@ python manage.py migrate
 
 6. **Package Management**: `pip-review` is included in requirements.txt for easy package updates. Run `pip-review --interactive` to update dependencies.
 
+## AI Assistant Configuration
+
+### Context7 MCP Integration
+
+This project uses Context7 MCP to provide up-to-date library documentation during development. Context7 automatically fetches current documentation, code examples, and API references for any library in the tech stack.
+
+**When Context7 is used:**
+- Library/API documentation lookups
+- Code generation requiring current syntax
+- Setup and configuration steps
+- Troubleshooting library-specific issues
+
+**Supported libraries include:**
+- Django 5.2.x
+- Tailwind CSS 4.x
+- DaisyUI 5.x
+- Django Social Auth
+- Django Sesame
+- Django Ninja
+- PostgreSQL
+- Redis
+
+**Usage:** Context7 is invoked automatically when documentation or code generation assistance is needed - no explicit request required.
+
 ## Additional Resources
 
 - **Full Project Documentation**: See @README.md for detailed setup and configuration
