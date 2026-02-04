@@ -8,13 +8,13 @@ class CustomUserCreationForm(UserCreationForm):
     A form that creates a user, with no privileges, from the given email and
     password.
     """
-    class Meta:
+    class Meta(UserCreationForm.Meta):
         model = CustomUser
         fields = ('email', 'first_name', 'last_name')
 
 class CustomUserChangeForm(UserChangeForm):
     """A form for updating users in the admin panel."""
-    class Meta:
+    class Meta(UserChangeForm.Meta):
         model = CustomUser
         fields = ('email', 'first_name', 'last_name', 'is_active', 'is_staff', 'is_superuser')
 
