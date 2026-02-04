@@ -94,8 +94,8 @@ A modern, production-ready Django starter template with authentication, beautifu
 
 5. **Set up environment variables**
    ```bash
-   cp .env.example .env.dev
-   # Edit .env.dev with your settings
+   cp .env.example .env
+   # Edit .env with your settings (OAuth keys, etc.)
    ```
 
 6. **Run database migrations**
@@ -164,7 +164,7 @@ ygitc-django-starter/
 
 ### Environment Variables
 
-Copy `.env.example` to `.env.dev` for development or `.env` for production and configure:
+Copy `.env.example` to `.env` and configure (works for both local and Docker development):
 
 ```bash
 # Django Settings
@@ -262,7 +262,7 @@ This project uses Django Social Auth for social authentication with OAuth2 provi
 
 #### 3. Configure Environment Variables
 
-Add these to your `.env.dev` (development) or `.env` (production):
+Add these to your `.env` file:
 
 ```bash
 # Django Social Auth - OAuth Provider Configuration
@@ -423,40 +423,29 @@ The Docker setup uses these files:
 
 - `docker-compose.yml`: Main orchestration configuration
 - `Dockerfile`: Multi-stage Python 3.12 + Node.js build
-- `.env.docker.example`: Template for Docker environment variables
-- `.env.docker`: Your local Docker environment (created from template, git-ignored)
+- `.env.example`: Environment template (same file works for local and Docker)
+- `.env`: Your local environment (created from template, git-ignored)
 - `.dockerignore`: Optimized build context
 
 #### Environment Variables for Docker
 
-1. **Create your local Docker environment file**:
-   ```bash
-   cp .env.docker.example .env.docker
-   ```
+The same `.env` file works for both local and Docker development. Docker Compose automatically overrides host-specific values (DB_HOST, REDIS_URL).
 
-2. **Configure your OAuth and Turnstile keys** in `.env.docker`:
-   ```bash
-   # Django Social Auth - OAuth Provider Configuration
-   GOOGLE_CLIENT_ID=your-google-client-id
-   GOOGLE_CLIENT_SECRET=your-google-client-secret
-   LINKEDIN_CLIENT_ID=your-linkedin-client-id
-   LINKEDIN_CLIENT_SECRET=your-linkedin-client-secret
+```bash
+cp .env.example .env
+# Edit .env with your OAuth and Turnstile keys
+```
 
-   # Cloudflare Turnstile Configuration
-   TURNSTILE_SITE_KEY=your-turnstile-site-key
-   TURNSTILE_SECRET_KEY=your-turnstile-secret-key
-   ```
-
-> **Security Note**: The `.env.docker` file is automatically ignored by git to prevent committing sensitive credentials.
+> **Security Note**: The `.env` file is automatically ignored by git to prevent committing sensitive credentials.
 
 #### Docker Development Workflow
 
 1. **First-time setup**:
    ```bash
-   # Copy and configure environment
-   cp .env.docker.example .env.docker
-   # Edit .env.docker with your actual OAuth/Turnstile keys
-   
+   # Copy and configure environment (same file works for local and Docker)
+   cp .env.example .env
+   # Edit .env with your OAuth/Turnstile keys
+
    # Start development environment
    docker compose --profile dev up --build
    ```

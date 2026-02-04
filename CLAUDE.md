@@ -42,9 +42,9 @@ pip install -r requirements.txt
 # Install Tailwind dependencies
 python manage.py tailwind install
 
-# Set up environment variables (optional - .env.dev has safe defaults)
+# Set up environment variables
 cp .env.example .env
-# Edit .env with your settings if needed
+# Edit .env with your OAuth/Turnstile keys if needed
 
 # Run database migrations
 python manage.py migrate
@@ -61,9 +61,9 @@ Visit http://127.0.0.1:8000/ to see your application.
 ### Docker Development
 
 ```bash
-# Create Docker environment file
-cp .env.docker.example .env.docker
-# Edit .env.docker with your OAuth/Turnstile keys
+# Set up environment variables (same file works for local and Docker)
+cp .env.example .env
+# Edit .env with your OAuth/Turnstile keys if needed
 
 # Start all services (Django + PostgreSQL + Redis)
 docker compose up --build
@@ -123,9 +123,7 @@ ygitc-django-starter/
 ├── manage.py                   # Django management script
 ├── docker-compose.yml          # Docker orchestration
 ├── Dockerfile                  # Multi-stage Python 3.12 + Node.js 18 build
-├── .env.example               # Environment template (production)
-├── .env.dev                   # Development environment (committed with safe defaults)
-├── .env.docker.example        # Docker environment template
+├── .env.example               # Environment template (works for local and Docker)
 ├── README.md                  # Full project documentation
 └── CLAUDE.md                  # This file
 ```
@@ -319,29 +317,22 @@ Follow PEP 8 import ordering:
 | `TIME_ZONE` | Django timezone | `America/New_York` |
 | `REDIS_URL` | Redis connection URL (production) | `redis://localhost:6379/1` |
 
-### Development Environment File
+### Environment File Setup
 
-For local development, the project includes `.env.dev` with safe defaults (committed to git). You can optionally create your own `.env` file:
+A single `.env` file works for both local and Docker development:
 
 ```bash
 cp .env.example .env
-# Edit .env with your development settings
+# Edit .env with your settings
 ```
 
-Use test Turnstile keys for development:
+Docker Compose automatically overrides host-specific values (DB_HOST, REDIS_URL) so the same `.env` file works in both environments.
+
+**Test Turnstile keys for development:**
 - **Site Key**: `1x00000000000000000000AA`
 - **Secret Key**: `1x0000000000000000000000000000000AA`
 
-### Docker Environment File
-
-For Docker development, copy `.env.docker.example` to `.env.docker`:
-
-```bash
-cp .env.docker.example .env.docker
-# Edit .env.docker with your OAuth and Turnstile keys
-```
-
-**Note:** `.env.docker` is git-ignored to prevent committing sensitive credentials.
+**Note:** `.env` is git-ignored to prevent committing credentials.
 
 ## Authentication Features
 
@@ -571,7 +562,7 @@ python manage.py migrate
 | Python deps | requirements.txt | Backend dependencies |
 | Docker compose | docker-compose.yml | Container orchestration |
 | Dockerfile | Dockerfile | Multi-stage Python 3.12 + Node.js 18 build |
-| Env templates | .env.example, .env.dev, .env.docker.example | Environment variable templates |
+| Env template | .env.example | Environment variable template (works for local and Docker) |
 
 ## Known Issues and Notes
 
@@ -582,7 +573,7 @@ python manage.py migrate
    - `django-redis` - For Redis cache backend
    - Add these to requirements.txt before production deployment if needed
 
-3. **Development Environment File**: `.env.dev` is committed to git with safe default values. This is intentional for easy developer onboarding, but ensure it doesn't contain real secrets.
+3. **Single Environment File**: A single `.env` file works for both local and Docker development. Docker Compose overrides host-specific values automatically.
 
 4. **Test Suite**: Test infrastructure exists but no comprehensive test suite is implemented yet. Test files exist (e.g., `users/tests.py`) but are mostly empty placeholders. Implement tests before production use.
 
