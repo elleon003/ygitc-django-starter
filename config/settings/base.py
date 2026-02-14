@@ -14,6 +14,11 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get
 
 # Application definition
 INSTALLED_APPS = [
+    # Customizable admin dashboard
+    'unfold',
+    'unfold.contrib.import_export',
+    'unfold.contrib.forms',
+
     # Django core apps
     'django.contrib.admin',
     'django.contrib.auth',
