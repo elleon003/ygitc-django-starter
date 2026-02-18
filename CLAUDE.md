@@ -439,7 +439,7 @@ This project follows Django's standard testing conventions:
    export DEBUG=False
    ```
 
-2. **Configure environment variables**: Set all required variables in `.env` or hosting platform
+2. **Configure environment variables**: Set all required variables in `.env` or hosting platform. Production will not start without **SECRET_KEY** (strong, unique) and **ALLOWED_HOSTS** (comma-separated domains). See README Production Checklist and `.env.example` comments.
 
 3. **Install dependencies**:
    ```bash
@@ -568,10 +568,7 @@ python manage.py migrate
 
 1. **Django Ninja API Framework**: Django Ninja (1.5.x) is installed but not yet configured. No API endpoints exist yet. Add API routes when needed for RESTful endpoints.
 
-2. **Production Dependencies**: Production settings reference packages not in requirements.txt:
-   - `whitenoise` - For serving static files without a separate web server
-   - `django-redis` - For Redis cache backend
-   - Add these to requirements.txt before production deployment if needed
+2. **CORS**: If you add an API or a frontend on another origin, set `CORS_ALLOWED_ORIGINS` explicitly in settings; do not use allow-all in production.
 
 3. **Single Environment File**: A single `.env` file works for both local and Docker development. Docker Compose overrides host-specific values automatically.
 
@@ -580,6 +577,8 @@ python manage.py migrate
 5. **Tailwind CSS v4**: This project uses the new Tailwind CSS v4 with CSS-based configuration. If you're familiar with v3's JavaScript config file (`tailwind.config.js`), note that v4 uses `@theme`, `@source`, and `@plugin` directives in CSS instead.
 
 6. **Package Management**: `pip-review` is included in requirements.txt for easy package updates. Run `pip-review --interactive` to update dependencies.
+
+7. **Forgot password**: The login page links to "Forgot your password?" but it is not implemented (`href="#"`). If you add password reset, apply the same protections as for magic link: rate limiting, no user enumeration (generic success message), and server-side CAPTCHA when Turnstile is enabled.
 
 ## AI Assistant Configuration
 

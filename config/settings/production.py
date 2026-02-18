@@ -1,5 +1,23 @@
 from .base import *
 
+# Production requires explicit SECRET_KEY (no default)
+_secret = os.environ.get('SECRET_KEY')
+if not _secret or _secret.strip() == '':
+    raise ValueError(
+        'Production requires SECRET_KEY to be set in the environment. '
+        'Generate one with: python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"'
+    )
+SECRET_KEY = _secret
+
+# Production requires non-empty ALLOWED_HOSTS
+_allowed = os.environ.get('ALLOWED_HOSTS', '').strip()
+if not _allowed:
+    raise ValueError(
+        'Production requires ALLOWED_HOSTS to be set in the environment '
+        '(comma-separated list of host/domain names).'
+    )
+ALLOWED_HOSTS = [h.strip() for h in _allowed.split(',') if h.strip()]
+
 # Production-specific settings
 DEBUG = False
 
@@ -7,7 +25,10 @@ DEBUG = False
 SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'Lax'
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_HSTS_SECONDS = 31536000

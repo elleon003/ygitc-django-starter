@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate
 from .models import CustomUser
-from .turnstile import verify_turnstile, is_turnstile_enabled
+from .turnstile import verify_turnstile, is_turnstile_enabled, get_client_ip
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -27,15 +27,7 @@ class CustomUserCreationForm(UserCreationForm):
             if not turnstile_response:
                 raise forms.ValidationError('Please complete the CAPTCHA verification.')
             
-            # Get user's IP address
-            remote_ip = None
-            if self.request:
-                x_forwarded_for = self.request.META.get('HTTP_X_FORWARDED_FOR')
-                if x_forwarded_for:
-                    remote_ip = x_forwarded_for.split(',')[0]
-                else:
-                    remote_ip = self.request.META.get('REMOTE_ADDR')
-            
+            remote_ip = get_client_ip(self.request) if self.request else None
             if not verify_turnstile(turnstile_response, remote_ip):
                 raise forms.ValidationError('CAPTCHA verification failed. Please try again.')
         
@@ -73,15 +65,7 @@ class CustomAuthenticationForm(AuthenticationForm):
             if not turnstile_response:
                 raise forms.ValidationError('Please complete the CAPTCHA verification.')
             
-            # Get user's IP address
-            remote_ip = None
-            if self.request:
-                x_forwarded_for = self.request.META.get('HTTP_X_FORWARDED_FOR')
-                if x_forwarded_for:
-                    remote_ip = x_forwarded_for.split(',')[0]
-                else:
-                    remote_ip = self.request.META.get('REMOTE_ADDR')
-            
+            remote_ip = get_client_ip(self.request) if self.request else None
             if not verify_turnstile(turnstile_response, remote_ip):
                 raise forms.ValidationError('CAPTCHA verification failed. Please try again.')
 

@@ -3,6 +3,9 @@ from .base import *
 # Development-specific settings
 DEBUG = True
 
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-#9ncyo)*vy7^*r@b6y34y-k02eieu*x1)pb79)poe6e_m2t^w_')
+
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,[::1],0.0.0.0').split(',')
 
 # Use X-Forwarded-Host header for proper host detection in Docker

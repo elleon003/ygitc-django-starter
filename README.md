@@ -368,9 +368,10 @@ Templates are organized in `theme/templates/`:
 ### Production Checklist
 
 1. **Environment Setup**
-   ```bash
-   export DJANGO_SETTINGS_MODULE=config.settings.production
-   ```
+   - Set `DJANGO_ENV=production` (or use production settings module).
+   - **Required:** Set `SECRET_KEY` (strong, unique; no default in production).
+   - **Required:** Set `ALLOWED_HOSTS` (comma-separated host/domain names).
+   - Set `DEBUG=False`.
 
 2. **Security Settings** (automatically enabled in production)
    - `DEBUG=False`
@@ -378,20 +379,27 @@ Templates are organized in `theme/templates/`:
    - `SESSION_COOKIE_SECURE=True`
    - `CSRF_COOKIE_SECURE=True`
 
-3. **Database Migration**
+3. **Reverse proxy and client IP**
+   - Rate limiting and Turnstile use the client IP. When behind a reverse proxy, the app only trusts `X-Forwarded-For` when `SECURE_PROXY_SSL_HEADER` is set (production sets it to `('HTTP_X_FORWARDED_PROTO', 'https')`). Ensure your proxy sets the correct headers and that the app is not directly exposed to untrusted clients without a trusted proxy.
+
+4. **Database Migration**
    ```bash
    python manage.py migrate
    ```
 
-4. **Static Files Collection**
+5. **Static Files Collection**
    ```bash
    python manage.py collectstatic
    ```
 
-5. **CSS Build**
+6. **CSS Build**
    ```bash
    python manage.py tailwind build
    ```
+
+7. **CORS**: If you add an API or a frontend on another origin, set `CORS_ALLOWED_ORIGINS` explicitly in settings; do not use allow-all in production.
+
+8. **Logging**: Production logs to `logs/django.log` under the project root. Ensure this directory is not under `STATIC_ROOT` or any URL that serves files, so log contents are never exposed.
 
 ### Docker Deployment
 
