@@ -22,7 +22,7 @@ def rate_limit_key(group, request):
     return (get_client_ip(request) or 'unknown')
 
 
-def verify_turnstile(token: str, remote_ip: str = None) -> bool:
+def verify_turnstile(token: str, remote_ip: str | None = None) -> bool:
     """
     Verify Cloudflare Turnstile CAPTCHA token
     

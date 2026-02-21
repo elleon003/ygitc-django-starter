@@ -1,4 +1,4 @@
-Django==5.2.9
+Django~=6.0.0
 django-tailwind==4.4.2
 django-browser-reload==1.21.0
 python-dotenv==1.2.1

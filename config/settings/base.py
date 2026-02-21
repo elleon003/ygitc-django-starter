@@ -126,7 +126,7 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@example.com')
 
 # Login/Logout URLs
 LOGIN_URL = '/users/login/'
-LOGIN_REDIRECT_URL = '/mindflow/'
+LOGIN_REDIRECT_URL = '/users/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
 
 SOCIAL_AUTH_JSONFIELD_ENABLED = True

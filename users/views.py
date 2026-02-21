@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
 from django.urls import reverse
-from ratelimit.decorators import ratelimit
+from django_ratelimit.decorators import ratelimit
 
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from .turnstile import get_turnstile_site_key, is_turnstile_enabled, verify_turnstile, get_client_ip
@@ -80,7 +80,7 @@ def login_view(request):
                 turnstile_token = request.POST.get('cf_turnstile_response_magic')
                 if not turnstile_token:
                     messages.error(request, 'Please complete the CAPTCHA verification.')
-                elif not verify_turnstile(turnstile_token, get_client_ip(request)):
+                elif not verify_turnstile(turnstile_token, get_client_ip(request) or ''):
                     messages.error(request, 'CAPTCHA verification failed. Please try again.')
                 else:
                     _send_magic_link_if_exists(request, email)
@@ -92,9 +92,12 @@ def login_view(request):
             form = CustomAuthenticationForm(request, data=request.POST)
             if form.is_valid():
                 user = form.get_user()
-                login(request, user)
-                messages.success(request, f'Welcome back, {user.get_full_name() or user.email}!')
-                return redirect('dashboard')  # Redirect to your dashboard or home page
+                if user is not None:
+                    login(request, user)
+                    messages.success(request, f'Welcome back, {user.get_full_name() or user.email}!')
+                    return redirect('dashboard')  # Redirect to your dashboard or home page
+                else:
+                    messages.error(request, 'Invalid email or password.')
             else:
                 messages.error(request, 'Invalid email or password.')
     else:
